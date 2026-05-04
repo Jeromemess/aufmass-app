@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1A1814">
+  <title>Aufmaß Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #1A1814;
+      color: #EDE8DF;
+      overscroll-behavior: none;
+      -webkit-text-size-adjust: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    #root { height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #3A3530; border-radius: 2px; }
+
+    /* Typography */
+    .mono { font-family: 'DM Mono', monospace; }
+
+    /* Inputs */
+    input, textarea, select {
+      -webkit-appearance: none; appearance: none;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #242018;
+      color: #EDE8DF;
+      border: 1.5px solid #3A3530;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 16px;
+      outline: none;
+      width: 100%;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #C8783A; }
+    input::placeholder, textarea::placeholder { color: #6B6460; }
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    select option { background: #242018; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      min-height: 46px; padding: 0 18px;
+      border-radius: 12px; border: none; outline: none; cursor: pointer;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 14px; font-weight: 600; letter-spacing: .01em;
+      transition: opacity .12s, transform .1s, background .15s;
+      -webkit-user-select: none; user-select: none;
+      white-space: nowrap;
+    }
+    .btn:active { opacity: .72; transform: scale(.97); }
+    .btn-primary { background: #C8783A; color: #fff; }
+    .btn-primary:hover { background: #D9864A; }
+    .btn-ghost {
+      background: #262218; color: #9A9088;
+      border: 1.5px solid #3A3530;
+    }
+    .btn-ghost:hover { background: #2E2920; color: #EDE8DF; }
+    .btn-danger { background: transparent; color: #D05050; border: 1.5px solid #3A3530; }
+
+    /* Animations */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes scaleIn { from { opacity:0; transform:scale(.96) translateY(8px); } to { opacity:1; transform:none; } }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+    .fade-up { animation: fadeUp .22s ease both; }
+    .fade-in { animation: fadeIn .18s ease both; }
+    .scale-in { animation: scaleIn .22s ease both; }
+
+    /* Cards */
+    .card {
+      background: #21201C;
+      border: 1.5px solid #302C28;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .card:hover { border-color: #484038; }
+
+    canvas { touch-action: none; display: block; }
+
+    @media print {
+      body { background: white !important; color: black !important; overflow: auto !important; }
+      #root { height: auto !important; overflow: visible !important; }
+      .no-print { display: none !important; }
+      .print-page { page-break-after: always; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+
+<template id="__bundler_thumbnail" data-bg-color="#1A1814">
+  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="10" width="100" height="60" rx="8" fill="#21201C" stroke="#302C28" stroke-width="1.5"/>
+    <rect x="18" y="20" width="30" height="20" rx="4" fill="#C8783A" opacity=".25"/>
+    <rect x="18" y="44" width="84" height="6" rx="3" fill="#302C28"/>
+    <rect x="18" y="54" width="60" height="6" rx="3" fill="#302C28"/>
+    <circle cx="33" cy="30" r="7" fill="#C8783A" opacity=".7"/>
+    <line x1="55" y1="22" x2="95" y2="22" stroke="#C8783A" stroke-width="2" stroke-linecap="round"/>
+    <line x1="55" y1="30" x2="85" y2="30" stroke="#4A90D9" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+  </svg>
+</template>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useCallback, useReducer, createContext, useContext, useMemo } = React;
+
+/* ─── IndexedDB ─── */
+const DB = { name:'AufmassProV2', ver:1, store:'projects' };
+const openDB = () => new Promise((res,rej) => {
+  const req = indexedDB.open(DB.name, DB.ver);
+  req.onerror = () => rej(req.error);
+  req.onsuccess = () => res(req.result);
+  req.onupgradeneeded = e => {
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains(DB.store))
+      db.createObjectStore(DB.store, { keyPath:'id' });
+  };
+});
+const dbAll = async () => { const db=await openDB(); return new Promise((r,e)=>{ const req=db.transaction(DB.store,'readonly').objectStore(DB.store).getAll(); req.onsuccess=()=>r(req.result); req.onerror=()=>e(req.error); }); };
+const dbPut = async item => { const db=await openDB(); return new Promise((r,e)=>{ const req=db.transaction(DB.store,'readwrite').objectStore(DB.store).put(item); req.onsuccess=()=>r(); req.onerror=()=>e(req.error); }); };
+const dbDel = async id   => { const db=await openDB(); return new Promise((r,e)=>{ const req=db.transaction(DB.store,'readwrite').objectStore(DB.store).delete(id); req.onsuccess=()=>r(); req.onerror=()=>e(req.error); }); };
+
+/* ─── Helpers ─── */
+const uid     = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const fmtDate = iso => new Date(iso).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+const clamp   = v => Math.max(0, Math.min(1, v));
+
+const ROOM_TYPES = ['Küche','Bad','Flur','Wohnzimmer','Schlafzimmer','Büro','Esszimmer','Keller','Dachboden','Sonstiges'];
+const MTYPES = [
+  { id:'breite', label:'Breite', color:'#C8783A', short:'B' },
+  { id:'hoehe',  label:'Höhe',   color:'#4A90D9', short:'H' },
+  { id:'tiefe',  label:'Tiefe',  color:'#56A882', short:'T' },
+];
+
+const compressImg = (file, maxPx=1920) => new Promise(res => {
+  const img=new Image(), url=URL.createObjectURL(file);
+  img.onload = () => {
+    const r=Math.min(maxPx/img.width, maxPx/img.height, 1);
+    const c=document.createElement('canvas');
+    c.width=img.width*r; c.height=img.height*r;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg',0.82));
+  };
+  img.src=url;
+});
+
+/* ─── Canvas drawing ─── */
+const rrect = (ctx,x,y,w,h,r) => {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+};
+
+const drawArrow = (ctx,x1,y1,x2,y2,color,s=1) => {
+  const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy);
+  if(len<4) return;
+  const ang=Math.atan2(dy,dx), hw=Math.min(16*s,len*.28), lw=Math.max(2*s,1.5);
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw; ctx.lineCap='round';
+  ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6*s;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const ah=(cx,cy,a) => { ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx-hw*Math.cos(a-Math.PI/6),cy-hw*Math.sin(a-Math.PI/6)); ctx.lineTo(cx-hw*Math.cos(a+Math.PI/6),cy-hw*Math.sin(a+Math.PI/6)); ctx.closePath(); ctx.fill(); };
+  ah(x2,y2,ang); ah(x1,y1,ang+Math.PI);
+  ctx.restore();
+};
+
+const drawLabel = (ctx,x1,y1,x2,y2,val,s=1) => {
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  let ang=Math.atan2(y2-y1,x2-x1);
+  if(ang>Math.PI/2||ang<-Math.PI/2) ang+=Math.PI;
+  const fs=Math.max(13*s,12);
+  ctx.save(); ctx.translate(mx,my); ctx.rotate(ang);
+  ctx.font=`500 ${fs}px 'DM Mono',monospace`;
+  const tw=ctx.measureText(val).width, pw=tw+12*s, ph=fs+8*s;
+  ctx.shadowColor='transparent';
+  rrect(ctx,-pw/2,-ph/2,pw,ph,5*s);
+  ctx.fillStyle='rgba(10,9,7,.88)'; ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.12)'; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle='#F5EFE4'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(val,0,1);
+  ctx.restore();
+};
+
+const drawTextAnnot = (ctx,x,y,text,selected=false,s=1) => {
+  const fs=Math.max(14*s,12);
+  ctx.save();
+  ctx.font=`500 ${fs}px 'DM Sans',system-ui,sans-serif`;
+  const tw=ctx.measureText(text).width, pw=tw+14*s, ph=fs+10*s;
+  ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=4*s;
+  rrect(ctx,x-pw/2,y-ph/2,pw,ph,7*s);
+  ctx.fillStyle='rgba(15,13,10,.9)'; ctx.fill();
+  ctx.strokeStyle=selected?'#C8783A':'rgba(200,120,58,.45)'; ctx.lineWidth=(selected?2:1.5)*s; ctx.stroke();
+  ctx.shadowColor='transparent';
+  ctx.fillStyle='#EDE8DF'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,x,y+.5);
+  ctx.restore();
+};
+
+const drawHandle = (ctx,x,y,type,color,s=1) => {
+  const r = type==='mid' ? 9*s : 11*s;
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=7*s;
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle= type==='mid' ? '#C8783A' : '#EDE8DF'; ctx.fill();
+  ctx.shadowColor='transparent';
+  ctx.strokeStyle=color; ctx.lineWidth=2*s; ctx.stroke();
+  ctx.restore();
+};
+
+/* ─── SVG Icons ─── */
+const Icon = ({d,d2,size=20,stroke='currentColor',sw=1.7,fill='none'}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={stroke} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+    <path d={d}/>
+    {d2 && <path d={d2}/>}
+  </svg>
+);
+const IcBack    = ({s=20}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>;
+const IcPlus    = ({s=18}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcEdit    = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+const IcTrash   = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>;
+const IcDoc     = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>;
+const IcCam     = ({s=18}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>;
+const IcShare   = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>;
+const IcList    = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>;
+const IcSave    = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
+const IcSearch  = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>;
+const IcArrow   = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>;
+const IcText    = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>;
+const IcX       = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+const IcCheck   = ({s=16}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>;
+const IcUpload  = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>;
+const IcDownload= ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+const IcPrint   = ({s=17}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>;
+const IcHome    = ({s=20}) => <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+
+/* ─── MicButton – Spracheingabe ─── */
+function MicButton({onResult, style={}}) {
+  const [listening, setListening] = useState(false);
+  const recRef = useRef(null);
+
+  const toggle = () => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) { alert('Spracheingabe wird von diesem Browser nicht unterstützt.'); return; }
+
+    if (listening) {
+      recRef.current?.stop();
+      setListening(false);
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = 'de-DE';
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.onresult = e => {
+      const text = e.results[0][0].transcript;
+      onResult(text);
+      setListening(false);
+    };
+    rec.onerror = () => setListening(false);
+    rec.onend   = () => setListening(false);
+    rec.start();
+    recRef.current = rec;
+    setListening(true);
+  };
+
+  return (
+    <button
+      className="btn"
+      onClick={toggle}
+      title={listening ? 'Aufnahme stoppen' : 'Sprache eingeben'}
+      style={{
+        width:38, height:38, minHeight:38, padding:0, borderRadius:9,
+        background: listening ? '#C8783A22' : '#242018',
+        border: `1.5px solid ${listening ? '#C8783A88' : '#3A3530'}`,
+        color: listening ? '#C8783A' : '#7A7268',
+        flexShrink:0,
+        ...style,
+      }}
+    >
+      {listening
+        ? <svg width="16" height="16" viewBox="0 0 24 24" fill="#C8783A"><circle cx="12" cy="12" r="8"/></svg>
+        : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
+            <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/>
+            <path d="M19 10v2a7 7 0 01-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+      }
+    </button>
+  );
+}
+
+
+const Ctx = createContext(null);
+const INIT = { view:'home', projects:[], pid:null, rid:null, phid:null, loaded:false };
+const reducer = (s,a) => {
+  switch(a.type){
+    case 'LOAD': return {...s, projects:a.projects, loaded:true};
+    case 'GO':   return {...s, view:a.view, pid:a.pid??s.pid, rid:a.rid??null, phid:a.phid??null};
+    default: return s;
+  }
+};
+
+/* ─── Root ─── */
+function App() {
+  const [st, dispatch] = useReducer(reducer, INIT);
+  const load = useCallback(async () => {
+    try { dispatch({type:'LOAD', projects: await dbAll()}); }
+    catch { dispatch({type:'LOAD', projects:[]}); }
+  }, []);
+  useEffect(() => { load(); }, []);
+  const go   = useCallback((view,pid,rid,phid) => dispatch({type:'GO',view,pid:pid??undefined,rid:rid??undefined,phid:phid??undefined}), []);
+  const save = useCallback(async proj => { await dbPut(proj); await load(); }, [load]);
+  const del  = useCallback(async id   => { await dbDel(id);   await load(); }, [load]);
+  const proj = st.projects.find(p=>p.id===st.pid)??null;
+  const room = proj?.rooms?.find(r=>r.id===st.rid)??null;
+  const photo= room?.photos?.find(ph=>ph.id===st.phid)??null;
+  const ctx  = {st, go, save, del, load, proj, room, photo};
+
+  if (!st.loaded) return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100dvh',background:'#1A1814',flexDirection:'column',gap:20}}>
+      <div style={{width:52,height:52,display:'flex',alignItems:'center',justifyContent:'center',background:'#C8783A',borderRadius:16}}>
+        <IcHome s={26} />
+      </div>
+      <div style={{fontSize:13,fontWeight:500,color:'#6B6460',letterSpacing:'.08em'}}>AUFMASS PRO</div>
+    </div>
+  );
+
+  return (
+    <Ctx.Provider value={ctx}>
+      <div style={{height:'100dvh',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+        {st.view==='home'        && <HomeView/>}
+        {st.view==='project'     && <ProjectView/>}
+        {st.view==='room'        && <RoomView/>}
+        {st.view==='photoEditor' && <PhotoEditor/>}
+        {st.view==='summary'     && <SummaryView/>}
+      </div>
+    </Ctx.Provider>
+  );
+}
+
+/* ─── Top Bar ─── */
+function TopBar({title, sub, onBack, right, accent=false}) {
+  return (
+    <div className="no-print" style={{
+      display:'flex', alignItems:'center', gap:10,
+      padding:'10px 16px',
+      background: accent ? '#1F1A14' : '#1D1B18',
+      borderBottom:`1.5px solid ${accent ? '#C8783A22' : '#2A2822'}`,
+      minHeight:60, flexShrink:0,
+    }}>
+      {onBack && (
+        <button className="btn btn-ghost" style={{minWidth:44,width:44,padding:0,borderRadius:10}} onClick={onBack}>
+          <IcBack/>
+        </button>
+      )}
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{fontSize:17,fontWeight:700,color:'#EDE8DF',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',letterSpacing:'-.01em'}}>{title}</div>
+        {sub && <div style={{fontSize:12,color:'#6B6460',marginTop:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{sub}</div>}
+      </div>
+      {right && <div style={{display:'flex',gap:7,flexShrink:0,alignItems:'center'}}>{right}</div>}
+    </div>
+  );
+}
+
+/* ─── Badge ─── */
+function Badge({children, color='#C8783A', bg}) {
+  return (
+    <span style={{
+      display:'inline-flex', alignItems:'center', gap:4,
+      padding:'3px 9px', borderRadius:20, fontSize:11, fontWeight:600,
+      background: bg ?? color+'22', color,
+      letterSpacing:'.03em',
+    }}>{children}</span>
+  );
+}
+
+/* ─── Stat chip ─── */
+function Stat({icon, label}) {
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:5,color:'#6B6460',fontSize:12}}>
+      {icon}<span>{label}</span>
+    </div>
+  );
+}
+
+/* ─── Empty State ─── */
+function Empty({icon, message, action}) {
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'55vh',gap:14,padding:24}}>
+      <div style={{width:72,height:72,borderRadius:20,background:'#242018',border:'1.5px solid #302C28',display:'flex',alignItems:'center',justifyContent:'center',opacity:.6}}>
+        {icon}
+      </div>
+      <div style={{fontSize:15,fontWeight:500,color:'#6B6460',textAlign:'center'}}>{message}</div>
+      {action}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
+   HOME VIEW
+════════════════════════════════════════ */
+function HomeView() {
+  const {st,go,save,del} = useContext(Ctx);
+  const [q, setQ]         = useState('');
+  const [filter, setFilter] = useState('all');
+  const [modal, setModal] = useState(false);
+  const [showIE, setShowIE] = useState(false);
+
+  const list = useMemo(() => {
+    let ps = st.projects;
+    if (filter==='active') ps = ps.filter(p=>p.status!=='done');
+    if (filter==='done')   ps = ps.filter(p=>p.status==='done');
+    if (q.trim()) { const qq=q.toLowerCase(); ps=ps.filter(p=>p.name.toLowerCase().includes(qq)||p.address.toLowerCase().includes(qq)); }
+    return [...ps].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  }, [st.projects,filter,q]);
+
+  const handleExport = async () => {
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify({v:1,ts:new Date().toISOString(),projects:st.projects},null,2)],{type:'application/json'}));
+    a.download=`aufmass-backup-${new Date().toISOString().slice(0,10)}.json`; a.click();
+  };
+  const handleImport = e => {
+    const f=e.target.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=async ev=>{ try{ const d=JSON.parse(ev.target.result); if(Array.isArray(d.projects)){ for(const p of d.projects) await save(p); alert(`${d.projects.length} Projekte importiert.`); } }catch{ alert('Import fehlgeschlagen.'); } };
+    rd.readAsText(f); e.target.value='';
+  };
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
+      {/* Header */}
+      <div className="no-print" style={{padding:'18px 18px 0',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <div>
+            <div style={{fontSize:24,fontWeight:700,color:'#EDE8DF',letterSpacing:'-.02em'}}>Aufmaß Pro</div>
+            <div style={{fontSize:12,color:'#6B6460',marginTop:1}}>Schreiner Aufmaß-Tool</div>
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            <button className="btn btn-ghost" style={{width:42,padding:0,borderRadius:11}} onClick={()=>setShowIE(v=>!v)} title="Import / Export">
+              <IcUpload s={16}/>
+            </button>
+            <button className="btn btn-primary" style={{gap:6}} onClick={()=>setModal(true)}>
+              <IcPlus/><span>Neu</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div style={{position:'relative',marginBottom:12}}>
+          <div style={{position:'absolute',left:13,top:'50%',transform:'translateY(-50%)',color:'#6B6460',pointerEvents:'none'}}>
+            <IcSearch/>
+          </div>
+          <input
+            style={{paddingLeft:40,borderRadius:12,fontSize:15}}
+            type="text" placeholder="Suche nach Kunde oder Adresse…"
+            value={q} onChange={e=>setQ(e.target.value)}
+          />
+        </div>
+
+        {/* Filter tabs */}
+        <div style={{display:'flex',gap:6,marginBottom:14}}>
+          {[['all','Alle'],['active','Aktiv'],['done','Abgeschlossen']].map(([v,l]) => (
+            <button key={v} className="btn" onClick={()=>setFilter(v)} style={{
+              flex:1, minHeight:36, fontSize:13, borderRadius:9,
+              background: filter===v ? '#C8783A' : '#242018',
+              color: filter===v ? '#fff' : '#6B6460',
+              border: filter===v ? 'none' : '1.5px solid #302C28',
+            }}>{l}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Import/Export bar */}
+      {showIE && (
+        <div className="no-print fade-up" style={{display:'flex',gap:8,padding:'8px 18px',background:'#1D1B18',borderBottom:'1.5px solid #2A2822',flexShrink:0}}>
+          <button className="btn btn-ghost" style={{flex:1,fontSize:13}} onClick={handleExport}><IcUpload/> Exportieren</button>
+          <label className="btn btn-ghost" style={{flex:1,fontSize:13,cursor:'pointer'}}><IcDownload/> Importieren<input type="file" accept=".json" style={{display:'none'}} onChange={handleImport}/></label>
+        </div>
+      )}
+
+      {/* List */}
+      <div style={{flex:1,overflowY:'auto',padding:'2px 18px 24px'}}>
+        {list.length===0 ? (
+          <Empty
+            icon={<IcDoc s={32}/>}
+            message="Noch keine Projekte vorhanden"
+            action={<button className="btn btn-primary" onClick={()=>setModal(true)}><IcPlus/> Projekt anlegen</button>}
+          />
+        ) : (
+          <div style={{display:'flex',flexDirection:'column',gap:10}}>
+            {list.map((p,i) => (
+              <ProjectCard key={p.id} project={p}
+                style={{animationDelay:i*.04+'s'}}
+                onOpen={()=>go('project',p.id)}
+                onDelete={()=>confirm(`"${p.name}" wirklich löschen?`)&&del(p.id)}
+                onToggle={()=>save({...p,status:p.status==='done'?'active':'done'})}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {modal && <ProjectModal onClose={()=>setModal(false)} onSave={async d=>{ const p={id:uid(),...d,createdAt:new Date().toISOString(),status:'active',rooms:[]}; await save(p); setModal(false); go('project',p.id); }}/>}
+    </div>
+  );
+}
+
+function ProjectCard({project:p, onOpen, onDelete, onToggle, style}) {
+  const rooms  = p.rooms?.length ?? 0;
+  const photos = p.rooms?.reduce((s,r)=>s+(r.photos?.length??0),0) ?? 0;
+  const preview= p.rooms?.flatMap(r=>r.photos??[]).find(ph=>ph.imageData);
+  const isDone = p.status === 'done';
+
+  return (
+    <div className="card fade-up" style={{cursor:'pointer', transition:'border-color .15s', ...style}}>
+      <div style={{display:'flex',gap:0}}>
+        {/* Preview strip */}
+        <div style={{width:90,flexShrink:0,background:'#151310',position:'relative',overflow:'hidden'}} onClick={onOpen}>
+          {preview
+            ? <img src={preview.imageData} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(.75)'}}/>
+            : <div style={{height:'100%',display:'flex',alignItems:'center',justifyContent:'center',opacity:.15}}>
+                <IcCam s={28}/>
+              </div>
+          }
+        </div>
+
+        {/* Content */}
+        <div style={{flex:1,padding:'14px 14px 12px',minWidth:0}} onClick={onOpen}>
+          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8,marginBottom:4}}>
+            <div style={{fontSize:16,fontWeight:600,color:'#EDE8DF',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',letterSpacing:'-.01em'}}>{p.name}</div>
+            <Badge color={isDone?'#56A882':'#C8783A'}>{isDone?'Fertig':'Aktiv'}</Badge>
+          </div>
+          <div style={{fontSize:12.5,color:'#7A7268',marginBottom:10,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.address}</div>
+          <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+            <Stat icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>} label={fmtDate(p.createdAt)}/>
+            <Stat icon={<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>} label={`${rooms} Räume`}/>
+            <Stat icon={<IcCam s={12}/>} label={`${photos} Fotos`}/>
+          </div>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div style={{display:'flex',borderTop:'1.5px solid #2A2822'}}>
+        <button className="btn" style={{flex:1,borderRadius:0,border:'none',fontSize:13,color:'#9A9088',background:'transparent',minHeight:40}} onClick={onToggle}>
+          {isDone ? 'Reaktivieren' : 'Abschließen'}
+        </button>
+        <div style={{width:1.5,background:'#2A2822'}}/>
+        <button className="btn" style={{flex:1,borderRadius:0,border:'none',fontSize:13,color:'#C05050',background:'transparent',minHeight:40,gap:5}} onClick={onDelete}>
+          <IcTrash s={14}/> Löschen
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Project Modal ─── */
+function ProjectModal({onClose, onSave, init={}}) {
+  const [f,setF] = useState({name:'',address:'',contact:'',phone:'',...init});
+  const s = (k,v) => setF(p=>({...p,[k]:v}));
+  return (
+    <Modal title={init.id ? 'Projekt bearbeiten' : 'Neues Projekt'} onClose={onClose}>
+      <div style={{display:'flex',flexDirection:'column',gap:13}}>
+        <FField label="Kundenname *"          val={f.name}    onChange={v=>s('name',v)}    ph="Max Mustermann"/>
+        <FField label="Baustellenadresse *"   val={f.address} onChange={v=>s('address',v)} ph="Musterstraße 1, 12345 Stadt"/>
+        <FField label="Ansprechpartner"       val={f.contact} onChange={v=>s('contact',v)} ph="Frau Schmidt"/>
+        <FField label="Telefon"               val={f.phone}   onChange={v=>s('phone',v)}   ph="+49 123 456789" type="tel"/>
+        <div style={{display:'flex',gap:9,marginTop:4}}>
+          <button className="btn btn-ghost" style={{flex:1}} onClick={onClose}>Abbrechen</button>
+          <button className="btn btn-primary" style={{flex:1}} onClick={()=>{ if(!f.name||!f.address){alert('Name und Adresse sind Pflicht');return;} onSave(f); }}>Speichern</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+/* ════════════════════════════════════════
+   PROJECT VIEW
+════════════════════════════════════════ */
+function ProjectView() {
+  const {proj,go,save} = useContext(Ctx);
+  const [rmModal, setRmModal]   = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  if (!proj) return null;
+
+  const addRoom = async d => {
+    const room = {id:uid(),...d,photos:[]};
+    await save({...proj,rooms:[...(proj.rooms??[]),room]});
+    setRmModal(false); go('room',proj.id,room.id);
+  };
+  const delRoom = async id => { await save({...proj,rooms:proj.rooms.filter(r=>r.id!==id)}); };
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
+      <TopBar
+        title={proj.name} sub={proj.address}
+        onBack={()=>go('home')}
+        right={<>
+          <button className="btn btn-ghost" style={{width:42,padding:0}} onClick={()=>go('summary',proj.id)} title="Zusammenfassung"><IcDoc/></button>
+          <button className="btn btn-ghost" style={{width:42,padding:0}} onClick={()=>setEditModal(true)} title="Bearbeiten"><IcEdit/></button>
+          <button className="btn btn-primary" style={{gap:6}} onClick={()=>setRmModal(true)}><IcPlus s={15}/> Raum</button>
+        </>}
+      />
+
+      {/* Meta strip */}
+      {(proj.contact||proj.phone) && (
+        <div style={{padding:'9px 18px',background:'#1D1B18',borderBottom:'1.5px solid #2A2822',display:'flex',gap:14,flexWrap:'wrap',flexShrink:0}}>
+          {proj.contact && <Stat icon={<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} label={proj.contact}/>}
+          {proj.phone && <a href={`tel:${proj.phone}`} style={{display:'flex',alignItems:'center',gap:5,color:'#C8783A',fontSize:12,textDecoration:'none'}}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68 2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 6a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 12.92z"/></svg>
+            {proj.phone}
+          </a>}
+        </div>
+      )}
+
+      <div style={{flex:1,overflowY:'auto',padding:'14px 18px 24px'}}>
+        {(!proj.rooms||proj.rooms.length===0) ? (
+          <Empty
+            icon={<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>}
+            message="Noch keine Räume angelegt"
+            action={<button className="btn btn-primary" onClick={()=>setRmModal(true)}><IcPlus/> Ersten Raum anlegen</button>}
+          />
+        ) : (
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:10}}>
+            {proj.rooms.map((room,i) => (
+              <RoomCard key={room.id} room={room} style={{animationDelay:i*.04+'s'}}
+                onOpen={()=>go('room',proj.id,room.id)}
+                onDelete={()=>confirm(`Raum "${room.name}" löschen?`)&&delRoom(room.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {rmModal   && <RoomModal onClose={()=>setRmModal(false)} onSave={addRoom}/>}
+      {editModal && <ProjectModal init={proj} onClose={()=>setEditModal(false)} onSave={async d=>{ await save({...proj,...d}); setEditModal(false); }}/>}
+    </div>
+  );
+}
+
+function RoomCard({room, onOpen, onDelete, style}) {
+  const photos = room.photos?.length ?? 0;
+  const pre    = room.photos?.[0];
+  return (
+    <div className="card fade-up" style={{cursor:'pointer',...style}}>
+      <div style={{height:110,background:'#151310',position:'relative',overflow:'hidden'}} onClick={onOpen}>
+        {pre?.imageData
+          ? <img src={pre.imageData} style={{width:'100%',height:'100%',objectFit:'cover',filter:'brightness(.75)'}}/>
+          : <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',opacity:.12}}><IcCam s={30}/></div>
+        }
+        <div style={{position:'absolute',bottom:7,right:8}}>
+          <Badge color="#9A9088">{room.type}</Badge>
+        </div>
+      </div>
+      <div style={{padding:'11px 13px 10px'}} onClick={onOpen}>
+        <div style={{fontSize:15,fontWeight:600,color:'#EDE8DF',marginBottom:3,letterSpacing:'-.01em'}}>{room.name}</div>
+        <div style={{fontSize:12,color:'#6B6460'}}>{photos} Foto{photos!==1?'s':''}</div>
+        {room.description && <div style={{fontSize:12,color:'#6B6460',marginTop:3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{room.description}</div>}
+      </div>
+      <div style={{display:'flex',borderTop:'1.5px solid #2A2822'}}>
+        <button className="btn" style={{flex:1,borderRadius:0,border:'none',fontSize:13,color:'#C8783A',background:'transparent',minHeight:38,gap:4}} onClick={onOpen}>
+          Öffnen <IcArrow/>
+        </button>
+        <div style={{width:1.5,background:'#2A2822'}}/>
+        <button className="btn" style={{width:50,borderRadius:0,border:'none',color:'#C05050',background:'transparent',minHeight:38}} onClick={onDelete}><IcTrash s={15}/></button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Room Modal ─── */
+function RoomModal({onClose, onSave, init={}}) {
+  const [f,setF] = useState({name:'',type:'Sonstiges',description:'',...init});
+  const s = (k,v) => setF(p=>({...p,[k]:v}));
+  return (
+    <Modal title={init.id ? 'Raum bearbeiten' : 'Neuer Raum'} onClose={onClose}>
+      <div style={{display:'flex',flexDirection:'column',gap:13}}>
+        <FField label="Raumname *" val={f.name} onChange={v=>s('name',v)} ph="z.B. Küche Erdgeschoss"/>
+        <div>
+          <label style={{display:'block',fontSize:12,fontWeight:600,color:'#6B6460',marginBottom:6,letterSpacing:'.03em'}}>RAUMTYP</label>
+          <select value={f.type} onChange={e=>s('type',e.target.value)}>
+            {ROOM_TYPES.map(t=><option key={t} value={t}>{t}</option>)}
+          </select>
+        </div>
+        <FField label="Beschreibung" val={f.description} onChange={v=>s('description',v)} ph="Optionale Notizen…" multi/>
+        <div style={{display:'flex',gap:9,marginTop:4}}>
+          <button className="btn btn-ghost" style={{flex:1}} onClick={onClose}>Abbrechen</button>
+          <button className="btn btn-primary" style={{flex:1}} onClick={()=>{ if(!f.name){alert('Raumname ist Pflicht');return;} onSave(f); }}>Speichern</button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
+/* ════════════════════════════════════════
+   ROOM VIEW
+════════════════════════════════════════ */
+function RoomView() {
+  const {proj,room,go,save} = useContext(Ctx);
+  const [editModal, setEditModal] = useState(false);
+  if (!proj||!room) return null;
+
+  const saveRoom = async r => { const rooms=proj.rooms.map(x=>x.id===r.id?r:x); await save({...proj,rooms}); };
+
+  const handlePhoto = async e => {
+    const f=e.target.files[0]; if(!f) return;
+    const imageData=await compressImg(f);
+    const ph={id:uid(),imageData,measurements:[],texts:[],notes:'',createdAt:new Date().toISOString()};
+    await saveRoom({...room,photos:[...(room.photos??[]),ph]});
+    go('photoEditor',proj.id,room.id,ph.id);
+    e.target.value='';
+  };
+  const delPhoto = async phId => { await saveRoom({...room,photos:room.photos.filter(p=>p.id!==phId)}); };
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
+      <TopBar
+        title={room.name} sub={`${proj.name} · ${room.type}`}
+        onBack={()=>go('project',proj.id)}
+        right={<>
+          <button className="btn btn-ghost" style={{width:42,padding:0}} onClick={()=>setEditModal(true)}><IcEdit/></button>
+          <label className="btn btn-primary" style={{cursor:'pointer',gap:6}}>
+            <IcCam/><span>Foto</span>
+            <input type="file" accept="image/*" capture="environment" style={{display:'none'}} onChange={handlePhoto}/>
+          </label>
+        </>}
+      />
+      {room.description && <div style={{padding:'9px 18px',background:'#1D1B18',borderBottom:'1.5px solid #2A2822',fontSize:13,color:'#7A7268',flexShrink:0}}>{room.description}</div>}
+
+      <div style={{flex:1,overflowY:'auto',padding:'14px 18px 24px'}}>
+        {(!room.photos||room.photos.length===0) ? (
+          <Empty
+            icon={<IcCam s={32}/>}
+            message="Noch keine Fotos vorhanden"
+            action={<label className="btn btn-primary" style={{cursor:'pointer',gap:7}}><IcCam/> Erstes Foto aufnehmen<input type="file" accept="image/*" capture="environment" style={{display:'none'}} onChange={handlePhoto}/></label>}
+          />
+        ) : (
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(220px,1fr))',gap:10}}>
+            {room.photos.map((ph,i) => (
+              <PhotoThumb key={ph.id} photo={ph} style={{animationDelay:i*.05+'s'}}
+                onOpen={()=>go('photoEditor',proj.id,room.id,ph.id)}
+                onDelete={()=>confirm('Foto löschen?')&&delPhoto(ph.id)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      {editModal && <RoomModal init={room} onClose={()=>setEditModal(false)} onSave={async d=>{ await saveRoom({...room,...d}); setEditModal(false); }}/>}
+    </div>
+  );
+}
+
+function PhotoThumb({photo, onOpen, onDelete, style}) {
+  const mc = photo.measurements?.length ?? 0;
+  const tc = photo.texts?.length ?? 0;
+  return (
+    <div className="card fade-up" style={{cursor:'pointer',...style}}>
+      <div style={{height:155,position:'relative',overflow:'hidden',background:'#151310'}} onClick={onOpen}>
+        {photo.imageData && <img src={photo.imageData} style={{width:'100%',height:'100%',objectFit:'cover'}}/>}
+        {(mc>0||tc>0) && (
+          <div style={{position:'absolute',top:8,left:8,display:'flex',gap:5}}>
+            {mc>0 && <Badge color="#C8783A">{mc} Maß{mc!==1?'e':''}</Badge>}
+            {tc>0 && <Badge color="#4A90D9">{tc} Text{tc!==1?'e':''}</Badge>}
+          </div>
+        )}
+      </div>
+      {photo.notes && (
+        <div style={{padding:'8px 12px',fontSize:12,color:'#7A7268',borderBottom:'1.5px solid #2A2822',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{photo.notes}</div>
+      )}
+      <div style={{display:'flex',borderTop:'1.5px solid #2A2822'}}>
+        <button className="btn" style={{flex:1,borderRadius:0,border:'none',fontSize:13,color:'#C8783A',background:'transparent',minHeight:38,gap:4}} onClick={onOpen}>
+          Bearbeiten <IcArrow/>
+        </button>
+        <div style={{width:1.5,background:'#2A2822'}}/>
+        <button className="btn" style={{width:50,borderRadius:0,border:'none',color:'#C05050',background:'transparent',minHeight:38}} onClick={onDelete}><IcTrash s={15}/></button>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
+   PHOTO EDITOR
+════════════════════════════════════════ */
+function PhotoEditor() {
+  const {proj,room,photo,go,save} = useContext(Ctx);
+
+  const [measures, setMeasures] = useState(()=>photo?.measurements??[]);
+  const [texts,    setTexts]    = useState(()=>photo?.texts??[]);
+  const [notes,    setNotes]    = useState(()=>photo?.notes??'');
+  const [tool,     setTool]     = useState('draw');
+  const [p1,       setP1]       = useState(null);
+  const [mPopup,   setMPopup]   = useState(null);
+  const [tPopup,   setTPopup]   = useState(null);
+  const [mval,     setMval]     = useState('');
+  const [mtype,    setMtype]    = useState('breite');
+  const [tval,     setTval]     = useState('');
+  const [selId,    setSelId]    = useState(null);
+  const [saved,    setSaved]    = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [showNotes,setShowNotes]= useState(false);
+  const [showList, setShowList] = useState(false);
+
+  const canvasRef = useRef();
+  const imgRef    = useRef();
+  const gRef      = useRef({ active:false, startPt:null, hit:null, dragging:false, snapshot:null });
+  const measRef   = useRef(measures); useEffect(()=>{ measRef.current=measures; },[measures]);
+  const textsRef  = useRef(texts);    useEffect(()=>{ textsRef.current=texts;   },[texts]);
+  const p1Ref     = useRef(p1);       useEffect(()=>{ p1Ref.current=p1;         },[p1]);
+  const toolRef   = useRef(tool);     useEffect(()=>{ toolRef.current=tool;     },[tool]);
+
+  useEffect(()=>{
+    if(!photo) return;
+    setMeasures(photo.measurements??[]);
+    setTexts(photo.texts??[]);
+    setNotes(photo.notes??'');
+    setP1(null); setSelId(null);
+  },[photo?.id]);
+
+  const syncCanvas = useCallback(()=>{
+    if(!imgRef.current||!canvasRef.current) return;
+    const r=imgRef.current.getBoundingClientRect();
+    if(r.width<2) return;
+    const c=canvasRef.current;
+    c.width=r.width; c.height=r.height;
+    c.style.width=r.width+'px'; c.style.height=r.height+'px';
+  },[]);
+
+  useEffect(()=>{
+    const t=setTimeout(syncCanvas,80);
+    window.addEventListener('resize',syncCanvas);
+    return()=>{ clearTimeout(t); window.removeEventListener('resize',syncCanvas); };
+  },[syncCanvas]);
+
+  // Redraw
+  useEffect(()=>{
+    const c=canvasRef.current; if(!c||c.width<2) return;
+    const ctx=c.getContext('2d');
+    ctx.clearRect(0,0,c.width,c.height);
+    const s=c.width/800;
+
+    measures.forEach(m=>{
+      const x1=m.x1*c.width,y1=m.y1*c.height,x2=m.x2*c.width,y2=m.y2*c.height;
+      drawArrow(ctx,x1,y1,x2,y2,m.color,s);
+      drawLabel(ctx,x1,y1,x2,y2,m.value+' cm',s);
+      if(selId===m.id){
+        drawHandle(ctx,x1,y1,'ep',m.color,s);
+        drawHandle(ctx,x2,y2,'ep',m.color,s);
+        drawHandle(ctx,(x1+x2)/2,(y1+y2)/2,'mid',m.color,s);
+      }
+    });
+
+    texts.forEach(t=>{
+      drawTextAnnot(ctx,t.x*c.width,t.y*c.height,t.text,selId===t.id,s);
+    });
+
+    if(p1){
+      const px=p1.x*c.width, py=p1.y*c.height;
+      ctx.save();
+      ctx.shadowColor='rgba(0,0,0,.5)'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.arc(px,py,12,0,Math.PI*2);
+      ctx.fillStyle='#C8783A'; ctx.globalAlpha=.9; ctx.fill();
+      ctx.globalAlpha=1;
+      ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(px,py,12,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle='rgba(255,255,255,.4)'; ctx.lineWidth=1.5; ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.moveTo(px-18,py); ctx.lineTo(px+18,py); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(px,py-18); ctx.lineTo(px,py+18); ctx.stroke();
+      ctx.restore();
+    }
+  },[measures,texts,p1,selId]);
+
+  const getCoords = useCallback(e=>{
+    const c=canvasRef.current; if(!c) return null;
+    const r=c.getBoundingClientRect();
+    const ev=e.changedTouches?.[0]??e.touches?.[0]??e;
+    if(ev.clientX==null) return null;
+    return { x:(ev.clientX-r.left)/r.width, y:(ev.clientY-r.top)/r.height };
+  },[]);
+
+  const findHit = useCallback(pt=>{
+    const c=canvasRef.current; if(!c) return null;
+    const cw=c.width, ch=c.height;
+    const THRESH=28;
+    for(const t of textsRef.current){
+      if(Math.hypot((pt.x-t.x)*cw,(pt.y-t.y)*ch)<THRESH) return {itemType:'text',id:t.id};
+    }
+    for(const m of measRef.current){
+      const mx=(m.x1+m.x2)/2, my=(m.y1+m.y2)/2;
+      if(Math.hypot((pt.x-m.x1)*cw,(pt.y-m.y1)*ch)<THRESH) return {itemType:'measure',id:m.id,handle:'p1'};
+      if(Math.hypot((pt.x-m.x2)*cw,(pt.y-m.y2)*ch)<THRESH) return {itemType:'measure',id:m.id,handle:'p2'};
+      if(Math.hypot((pt.x-mx)*cw,(pt.y-my)*ch)<THRESH+8)    return {itemType:'measure',id:m.id,handle:'mid'};
+    }
+    return null;
+  },[]);
+
+  const handlePointerDown = useCallback(e=>{
+    if(mPopup||tPopup) return;
+    e.preventDefault();
+    const pt=getCoords(e); if(!pt) return;
+    const hit=findHit(pt);
+    let snapshot=null;
+    if(hit){
+      if(hit.itemType==='measure'){
+        const m=measRef.current.find(x=>x.id===hit.id);
+        if(m) snapshot={x1:m.x1,y1:m.y1,x2:m.x2,y2:m.y2};
+      } else {
+        const t=textsRef.current.find(x=>x.id===hit.id);
+        if(t) snapshot={x:t.x,y:t.y};
+      }
+      setSelId(hit.id);
+    }
+    gRef.current={ active:true, startPt:pt, hit, dragging:false, snapshot };
+  },[mPopup,tPopup,getCoords,findHit]);
+
+  const handlePointerMove = useCallback(e=>{
+    const g=gRef.current; if(!g.active||!g.hit) return;
+    e.preventDefault();
+    const pt=getCoords(e); if(!pt) return;
+    const c=canvasRef.current;
+    const movePx=c?Math.hypot((pt.x-g.startPt.x)*c.width,(pt.y-g.startPt.y)*c.height):0;
+    if(movePx<5) return;
+    g.dragging=true;
+    const tdx=pt.x-g.startPt.x, tdy=pt.y-g.startPt.y;
+    const {itemType,id,handle}=g.hit;
+    if(itemType==='measure'){
+      setMeasures(ms=>ms.map(m=>{ if(m.id!==id) return m;
+        if(handle==='p1') return {...m,x1:clamp(pt.x),y1:clamp(pt.y)};
+        if(handle==='p2') return {...m,x2:clamp(pt.x),y2:clamp(pt.y)};
+        if(handle==='mid'&&g.snapshot) return {...m,x1:clamp(g.snapshot.x1+tdx),y1:clamp(g.snapshot.y1+tdy),x2:clamp(g.snapshot.x2+tdx),y2:clamp(g.snapshot.y2+tdy)};
+        return m;
+      }));
+    } else if(itemType==='text'){
+      setTexts(ts=>ts.map(t=>t.id!==id?t:{...t,x:clamp(g.snapshot.x+tdx),y:clamp(g.snapshot.y+tdy)}));
+    }
+  },[getCoords]);
+
+  const handlePointerUp = useCallback(e=>{
+    const g=gRef.current; if(!g.active){ gRef.current.active=false; return; }
+    gRef.current.active=false;
+    if(g.dragging) return;
+    const pt=getCoords(e); if(!pt) return;
+    const currentP1=p1Ref.current;
+    const currentTool=toolRef.current;
+    if(g.hit) return;
+    setSelId(null);
+    if(currentTool==='text'){
+      setTPopup(pt); setTval('');
+    } else {
+      if(currentP1===null){
+        setP1(pt);
+      } else {
+        const c=canvasRef.current;
+        const dist=c?Math.hypot((pt.x-currentP1.x)*c.width,(pt.y-currentP1.y)*c.height):0;
+        if(dist>10){
+          setMPopup({x1:currentP1.x,y1:currentP1.y,x2:pt.x,y2:pt.y});
+          setMval(''); setMtype('breite'); setP1(null);
+        } else {
+          setP1(null);
+        }
+      }
+    }
+  },[getCoords]);
+
+  const handleDblClick = useCallback(e=>{
+    const pt=getCoords(e); if(!pt) return;
+    const hit=findHit(pt); if(!hit) return;
+    setEditItem(hit);
+  },[getCoords,findHit]);
+
+  const switchTool = t => { setTool(t); toolRef.current=t; setP1(null); setSelId(null); };
+
+  useEffect(()=>{
+    const h=e=>{ if(e.key==='Escape'){ setP1(null); setSelId(null); } };
+    window.addEventListener('keydown',h); return()=>window.removeEventListener('keydown',h);
+  },[]);
+
+  const savePh = useCallback(async()=>{
+    if(!proj||!room||!photo) return;
+    const uph={...photo,measurements:measures,texts,notes};
+    const rooms=proj.rooms.map(r=>r.id===room.id?{...room,photos:room.photos.map(p=>p.id===photo.id?uph:p)}:r);
+    await save({...proj,rooms});
+    setSaved(true); setTimeout(()=>setSaved(false),2200);
+  },[measures,texts,notes,photo,room,proj,save]);
+
+  const shareImg = async()=>{
+    await savePh();
+    const c=document.createElement('canvas'), img=new Image();
+    img.onload=()=>{
+      c.width=img.naturalWidth; c.height=img.naturalHeight;
+      const ctx=c.getContext('2d'); ctx.drawImage(img,0,0);
+      const s=img.naturalWidth/800;
+      measures.forEach(m=>{ const x1=m.x1*c.width,y1=m.y1*c.height,x2=m.x2*c.width,y2=m.y2*c.height; drawArrow(ctx,x1,y1,x2,y2,m.color,s); drawLabel(ctx,x1,y1,x2,y2,m.value+' cm',s); });
+      texts.forEach(t=>{ drawTextAnnot(ctx,t.x*c.width,t.y*c.height,t.text,false,s); });
+      c.toBlob(async blob=>{
+        const file=new File([blob],'aufmass.jpg',{type:'image/jpeg'});
+        if(navigator.canShare?.({files:[file]})) await navigator.share({files:[file],title:'Aufmaß'}).catch(()=>{});
+        else { const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`aufmass-${photo.id}.jpg`; a.click(); }
+      },'image/jpeg',.9);
+    };
+    img.src=photo.imageData;
+  };
+
+  if(!photo) return null;
+
+  const isDrawing = p1!==null;
+  const totalItems = measures.length + texts.length;
+
+  // Hint
+  const hint = tool==='text' ? 'Tippen zum Platzieren'
+    : isDrawing ? 'Zweiten Punkt antippen'
+    : 'Ersten Punkt antippen';
+  const hintColor = isDrawing ? '#56A882' : tool==='text' ? '#4A90D9' : '#6B6460';
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden',background:'#0F0E0C'}}>
+      <TopBar
+        title={room?.name??''}
+        sub="Aufmaß bearbeiten"
+        onBack={()=>{ savePh(); go('room',proj.id,room.id); }}
+        right={<>
+          <button className="btn btn-ghost" style={{gap:5,fontSize:13,minHeight:38,paddingLeft:11,paddingRight:13}} onClick={()=>setShowList(v=>!v)}>
+            <IcList/><span className="mono">{totalItems}</span>
+          </button>
+          <button className="btn btn-ghost" style={{width:40,padding:0}} onClick={shareImg}><IcShare/></button>
+          <button className="btn" onClick={savePh} style={{
+            minHeight:38, paddingLeft:13, paddingRight:15, gap:6,
+            background: saved ? '#2A5C3A' : '#C8783A',
+            color: '#fff', fontSize:13,
+          }}>
+            {saved ? <><IcCheck/> Gespeichert</> : <><IcSave/> Speichern</>}
+          </button>
+        </>}
+      />
+
+      {/* ── Tool strip ── */}
+      <div className="no-print" style={{
+        display:'flex', alignItems:'center', gap:8, padding:'9px 14px',
+        background:'#161411', borderBottom:'1.5px solid #2A2822', flexShrink:0,
+      }}>
+        {/* Draw */}
+        <button className="btn" onClick={()=>switchTool('draw')} style={{
+          minHeight:40, fontSize:13, paddingLeft:13, paddingRight:15, gap:6,
+          background: tool==='draw' ? '#C8783A22' : 'transparent',
+          color: tool==='draw' ? '#C8783A' : '#7A7268',
+          border: `1.5px solid ${tool==='draw' ? '#C8783A55' : '#2A2822'}`,
+        }}>
+          <IcArrow/> Maß zeichnen
+        </button>
+        {/* Text */}
+        <button className="btn" onClick={()=>switchTool('text')} style={{
+          minHeight:40, fontSize:13, paddingLeft:13, paddingRight:15, gap:6,
+          background: tool==='text' ? '#4A90D922' : 'transparent',
+          color: tool==='text' ? '#4A90D9' : '#7A7268',
+          border: `1.5px solid ${tool==='text' ? '#4A90D955' : '#2A2822'}`,
+        }}>
+          <IcText/> Textnotiz
+        </button>
+
+        <div style={{flex:1}}/>
+
+        {isDrawing && (
+          <button className="btn" style={{
+            minHeight:38, fontSize:13, paddingLeft:12, paddingRight:14, gap:5,
+            background:'transparent', color:'#C05050', border:'1.5px solid #3A2424',
+          }} onClick={()=>setP1(null)}>
+            <IcX/> Abbruch
+          </button>
+        )}
+        {selId && (
+          <button className="btn" style={{
+            minHeight:38, fontSize:13, paddingLeft:12, paddingRight:14, gap:5,
+            background:'transparent', color:'#C05050', border:'1.5px solid #3A2424',
+          }} onClick={()=>{ setMeasures(ms=>ms.filter(m=>m.id!==selId)); setTexts(ts=>ts.filter(t=>t.id!==selId)); setSelId(null); }}>
+            <IcTrash s={14}/> Löschen
+          </button>
+        )}
+      </div>
+
+      {/* ── Hint ── */}
+      <div style={{
+        padding:'5px 16px', fontSize:12, fontWeight:500, textAlign:'center',
+        color: hintColor, background:'#0F0E0C', flexShrink:0,
+        borderBottom:'1px solid #1E1C18', display:'flex', alignItems:'center', justifyContent:'center', gap:7,
+      }}>
+        {isDrawing && <span style={{display:'inline-block',width:7,height:7,borderRadius:'50%',background:'#56A882',animation:'pulse 1.2s infinite'}}/>}
+        {hint}
+      </div>
+
+      {/* ── Main canvas area ── */}
+      <div style={{flex:1,display:'flex',overflow:'hidden',position:'relative'}}>
+        <div ref={imgRef} style={{flex:1,position:'relative',overflow:'hidden',display:'flex',alignItems:'center',justifyContent:'center',background:'#0A0908'}}>
+          {photo.imageData && (
+            <img src={photo.imageData} style={{maxWidth:'100%',maxHeight:'100%',objectFit:'contain',display:'block',userSelect:'none',pointerEvents:'none'}} onLoad={syncCanvas}/>
+          )}
+          <canvas
+            ref={canvasRef}
+            style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',cursor:tool==='text'?'crosshair':'crosshair'}}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onDoubleClick={handleDblClick}
+          />
+        </div>
+
+        {/* ── Measure list panel ── */}
+        {showList && (
+          <div className="scale-in" style={{
+            width:240, flexShrink:0,
+            background:'#161411', borderLeft:'1.5px solid #2A2822',
+            display:'flex', flexDirection:'column', overflow:'hidden',
+          }}>
+            <div style={{padding:'12px 14px 8px',display:'flex',alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid #2A2822'}}>
+              <div style={{fontSize:13,fontWeight:600,color:'#EDE8DF'}}>Elemente</div>
+              <button className="btn" style={{width:28,height:28,minHeight:28,padding:0,border:'none',background:'transparent',color:'#6B6460'}} onClick={()=>setShowList(false)}><IcX s={14}/></button>
+            </div>
+            <div style={{flex:1,overflowY:'auto',padding:'8px'}}>
+              {measures.length===0 && texts.length===0 && (
+                <div style={{padding:'12px',fontSize:12,color:'#6B6460',textAlign:'center'}}>Noch keine Elemente</div>
+              )}
+              {measures.map(m=>(
+                <div key={m.id} onClick={()=>setSelId(m.id)} style={{
+                  padding:'9px 10px', borderRadius:9, marginBottom:5, cursor:'pointer',
+                  background: selId===m.id ? '#242018' : 'transparent',
+                  border: `1px solid ${selId===m.id ? '#3A3530' : 'transparent'}`,
+                  display:'flex', alignItems:'center', gap:8,
+                }}>
+                  <div style={{width:10,height:10,borderRadius:'50%',background:m.color,flexShrink:0}}/>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:12,color:'#9A9088'}}>{MTYPES.find(t=>t.id===m.type)?.label}</div>
+                    <div className="mono" style={{fontSize:14,color:'#EDE8DF',fontWeight:500}}>{m.value} cm</div>
+                  </div>
+                  <button className="btn" style={{width:28,height:28,minHeight:28,padding:0,border:'none',background:'transparent',color:'#C05050'}} onClick={e=>{e.stopPropagation();setMeasures(ms=>ms.filter(x=>x.id!==m.id));if(selId===m.id)setSelId(null);}}>
+                    <IcTrash s={13}/>
+                  </button>
+                </div>
+              ))}
+              {texts.map(t=>(
+                <div key={t.id} onClick={()=>setSelId(t.id)} style={{
+                  padding:'9px 10px', borderRadius:9, marginBottom:5, cursor:'pointer',
+                  background: selId===t.id ? '#242018' : 'transparent',
+                  border: `1px solid ${selId===t.id ? '#3A3530' : 'transparent'}`,
+                  display:'flex', alignItems:'center', gap:8,
+                }}>
+                  <div style={{flexShrink:0,color:'#4A90D9'}}><IcText s={13}/></div>
+                  <div style={{flex:1,fontSize:13,color:'#EDE8DF',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{t.text}</div>
+                  <button className="btn" style={{width:28,height:28,minHeight:28,padding:0,border:'none',background:'transparent',color:'#C05050'}} onClick={e=>{e.stopPropagation();setTexts(ts=>ts.filter(x=>x.id!==t.id));if(selId===t.id)setSelId(null);}}>
+                    <IcTrash s={13}/>
+                  </button>
+                </div>
+              ))}
+            </div>
+            {/* Notes */}
+            <div style={{padding:'10px',borderTop:'1px solid #2A2822'}}>
+              <div style={{fontSize:11,fontWeight:600,color:'#6B6460',letterSpacing:'.04em',marginBottom:6}}>NOTIZ</div>
+              <div style={{position:'relative'}}>
+                <textarea
+                  value={notes} onChange={e=>setNotes(e.target.value)}
+                  placeholder="Anmerkungen…"
+                  style={{height:72,resize:'none',fontSize:13,borderRadius:9,padding:'9px 44px 9px 11px'}}
+                />
+                <MicButton onResult={t=>setNotes(v=>(v+' '+t).trim())} style={{position:'absolute',right:6,top:6,width:32,height:32,minHeight:32,borderRadius:7}}/>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Measure value popup mit großer Zifferntastatur ── */}
+      {mPopup && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.75)',display:'flex',alignItems:'flex-end',zIndex:300}} onClick={()=>{setMPopup(null);setP1(null);}}>
+          <div className="scale-in" style={{
+            background:'#1D1B18', border:'1.5px solid #302C28', borderRadius:'20px 20px 0 0',
+            padding:'18px 16px 32px', width:'100%', maxWidth:480, margin:'0 auto',
+            boxShadow:'0 -8px 48px rgba(0,0,0,.6)',
+          }} onClick={e=>e.stopPropagation()}>
+
+            {/* Header */}
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+              <div style={{fontSize:15,fontWeight:600,color:'#EDE8DF'}}>Maß eingeben</div>
+              <button className="btn" style={{width:32,height:32,minHeight:32,padding:0,border:'none',background:'transparent',color:'#6B6460'}} onClick={()=>{setMPopup(null);setP1(null);}}><IcX/></button>
+            </div>
+
+            {/* Type selector */}
+            <div style={{display:'flex',gap:7,marginBottom:14}}>
+              {MTYPES.map(t=>(
+                <button key={t.id} className="btn" onClick={()=>setMtype(t.id)} style={{
+                  flex:1, minHeight:42, fontSize:14, gap:6, borderRadius:10,
+                  background: mtype===t.id ? t.color+'22' : '#242018',
+                  color: mtype===t.id ? t.color : '#7A7268',
+                  border: `1.5px solid ${mtype===t.id ? t.color+'66' : '#302C28'}`,
+                }}>
+                  <div style={{width:9,height:9,borderRadius:'50%',background:t.color,flexShrink:0}}/>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Display */}
+            <div style={{
+              background:'#131210', borderRadius:14, padding:'16px 20px',
+              marginBottom:14, display:'flex', alignItems:'center', justifyContent:'space-between',
+              border:'1.5px solid #2A2822',
+            }}>
+              <div style={{fontFamily:'DM Mono,monospace',fontSize:42,fontWeight:500,color: mval ? '#EDE8DF' : '#3A3530', letterSpacing:'-.02em', minWidth:0, overflow:'hidden'}}>
+                {mval || '0'}
+              </div>
+              <div style={{fontSize:18,color:'#6B6460',fontWeight:500,flexShrink:0,marginLeft:12}}>cm</div>
+            </div>
+
+            {/* Numpad */}
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:9,marginBottom:12}}>
+              {['7','8','9','4','5','6','1','2','3','.','0','⌫'].map(k=>(
+                <button key={k} className="btn" onClick={()=>{
+                  if(k==='⌫') setMval(v=>v.slice(0,-1));
+                  else if(k==='.') setMval(v=>v.includes('.')?v:v+k);
+                  else setMval(v=>v==='0'?k:v+k);
+                }} style={{
+                  minHeight:58, fontSize: k==='⌫' ? 20 : 22,
+                  fontFamily:'DM Mono,monospace', fontWeight:500,
+                  background: k==='⌫' ? '#2A2418' : '#262218',
+                  color: k==='⌫' ? '#C8783A' : '#EDE8DF',
+                  border:'1.5px solid #302C28', borderRadius:12,
+                }}>
+                  {k}
+                </button>
+              ))}
+            </div>
+
+            {/* Confirm */}
+            <button className="btn btn-primary" style={{width:'100%',minHeight:52,fontSize:16,borderRadius:14}} disabled={!mval||mval==='0'} onClick={()=>{
+              if(!mval||mval==='0') return;
+              const mt=MTYPES.find(t=>t.id===mtype);
+              setMeasures(ms=>[...ms,{id:uid(),...mPopup,type:mtype,color:mt.color,value:mval}]);
+              setMPopup(null);
+            }}>
+              Maß übernehmen
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Text popup mit Spracheingabe ── */}
+      {tPopup && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.75)',display:'flex',alignItems:'flex-end',zIndex:300}} onClick={()=>setTPopup(null)}>
+          <div className="scale-in" style={{
+            background:'#1D1B18', border:'1.5px solid #302C28', borderRadius:'20px 20px 0 0',
+            padding:'18px 16px 32px', width:'100%', maxWidth:480, margin:'0 auto',
+            boxShadow:'0 -8px 48px rgba(0,0,0,.6)',
+          }} onClick={e=>e.stopPropagation()}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+              <div style={{fontSize:15,fontWeight:600,color:'#EDE8DF'}}>Textnotiz</div>
+              <button className="btn" style={{width:32,height:32,minHeight:32,padding:0,border:'none',background:'transparent',color:'#6B6460'}} onClick={()=>setTPopup(null)}><IcX/></button>
+            </div>
+            <div style={{position:'relative',marginBottom:12}}>
+              <input
+                autoFocus
+                type="text" placeholder="Tippen oder Mikrofon nutzen…"
+                value={tval} onChange={e=>setTval(e.target.value)}
+                onKeyDown={e=>e.key==='Enter'&&tval&&(()=>{
+                  setTexts(ts=>[...ts,{id:uid(),x:tPopup.x,y:tPopup.y,text:tval}]);
+                  setTPopup(null);
+                })()}
+                style={{fontSize:16,paddingRight:52}}
+              />
+              <MicButton onResult={t=>setTval(v=>(v+' '+t).trim())} style={{position:'absolute',right:8,top:'50%',transform:'translateY(-50%)'}}/>
+            </div>
+            <div style={{display:'flex',gap:9}}>
+              <button className="btn btn-ghost" style={{flex:1}} onClick={()=>setTPopup(null)}>Abbrechen</button>
+              <button className="btn btn-primary" style={{flex:2,minHeight:48,fontSize:15}} disabled={!tval} onClick={()=>{ if(!tval) return; setTexts(ts=>[...ts,{id:uid(),x:tPopup.x,y:tPopup.y,text:tval}]); setTPopup(null); }}>Hinzufügen</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Edit item popup ── */}
+      {editItem && (() => {
+        const isM = editItem.itemType==='measure';
+        const item = isM ? measures.find(m=>m.id===editItem.id) : texts.find(t=>t.id===editItem.id);
+        if (!item) { setEditItem(null); return null; }
+        return (
+          <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.7)',display:'flex',alignItems:'flex-end',zIndex:300,padding:16}} onClick={()=>setEditItem(null)}>
+            <div className="scale-in" style={{
+              background:'#1D1B18', border:'1.5px solid #302C28', borderRadius:20,
+              padding:20, width:'100%', maxWidth:420, margin:'0 auto',
+              boxShadow:'0 -4px 40px rgba(0,0,0,.5)',
+            }} onClick={e=>e.stopPropagation()}>
+              <div style={{fontSize:16,fontWeight:600,color:'#EDE8DF',marginBottom:12}}>
+                {isM ? 'Maß bearbeiten' : 'Textnotiz bearbeiten'}
+              </div>
+              {isM ? (
+                <>
+                  <div style={{display:'flex',gap:7,marginBottom:12}}>
+                    {MTYPES.map(t=>(
+                      <button key={t.id} className="btn" onClick={()=>setMeasures(ms=>ms.map(m=>m.id===item.id?{...m,type:t.id,color:t.color}:m))} style={{
+                        flex:1,minHeight:36,fontSize:13,borderRadius:9,
+                        background:item.type===t.id?t.color+'22':'#242018',
+                        color:item.type===t.id?t.color:'#7A7268',
+                        border:`1.5px solid ${item.type===t.id?t.color+'66':'#302C28'}`,
+                      }}>
+                        <div style={{width:7,height:7,borderRadius:'50%',background:t.color}}/>
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{position:'relative',marginBottom:12}}>
+                    <input type="number" inputMode="decimal" defaultValue={item.value}
+                      onChange={e=>setMeasures(ms=>ms.map(m=>m.id===item.id?{...m,value:e.target.value}:m))}
+                      style={{fontSize:24,fontFamily:'DM Mono,monospace',textAlign:'center',padding:'12px 50px 12px 16px',borderRadius:11}}
+                    />
+                    <div style={{position:'absolute',right:14,top:'50%',transform:'translateY(-50%)',color:'#6B6460',fontWeight:500}}>cm</div>
+                  </div>
+                </>
+              ) : (
+                <input type="text" defaultValue={item.text}
+                  onChange={e=>setTexts(ts=>ts.map(t=>t.id===item.id?{...t,text:e.target.value}:t))}
+                  style={{marginBottom:12,fontSize:16}}
+                />
+              )}
+              <div style={{display:'flex',gap:9}}>
+                <button className="btn btn-danger" style={{flex:1}} onClick={()=>{ if(isM) setMeasures(ms=>ms.filter(m=>m.id!==item.id)); else setTexts(ts=>ts.filter(t=>t.id!==item.id)); setEditItem(null); setSelId(null); }}>
+                  <IcTrash s={14}/> Löschen
+                </button>
+                <button className="btn btn-primary" style={{flex:2}} onClick={()=>setEditItem(null)}>Fertig</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
+   SUMMARY VIEW
+════════════════════════════════════════ */
+function SummaryView() {
+  const {proj,go} = useContext(Ctx);
+  if (!proj) return null;
+  const subj = encodeURIComponent(`Aufmaß ${proj.name} – ${proj.address}`);
+  const body = encodeURIComponent(`Hallo,\n\nanbei die Aufmaß-Unterlagen:\n\nKunde: ${proj.name}\nAdresse: ${proj.address}\n${proj.contact?'Ansprechpartner: '+proj.contact+'\n':''}${proj.phone?'Telefon: '+proj.phone+'\n':''}\nMit freundlichen Grüßen`);
+  const handleShare = async()=>{ if(navigator.share){ try{ await navigator.share({title:`Aufmaß ${proj.name}`,text:`Aufmaß für ${proj.name}, ${proj.address}`}); return; }catch{} } window.location.href=`mailto:?subject=${subj}&body=${body}`; };
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'100%',overflow:'hidden'}}>
+      <TopBar title="Zusammenfassung" sub={proj.name} onBack={()=>go('project',proj.id)}
+        right={<div style={{display:'flex',gap:8}} className="no-print">
+          <button className="btn btn-ghost" style={{gap:6,fontSize:13}} onClick={()=>window.print()}><IcPrint/> Drucken</button>
+          <button className="btn btn-primary" style={{gap:6,fontSize:13}} onClick={handleShare}><IcShare/> Teilen</button>
+        </div>}
+      />
+
+      <div style={{flex:1,overflowY:'auto'}}>
+        <div style={{maxWidth:860,margin:'0 auto',padding:'24px 18px 48px'}}>
+          {/* Header card */}
+          <div style={{background:'#21201C',border:'1.5px solid #302C28',borderRadius:18,padding:'22px 24px',marginBottom:28}}>
+            <div style={{fontSize:11,fontWeight:600,color:'#6B6460',letterSpacing:'.1em',marginBottom:4}}>AUFMASS-DOKUMENTATION</div>
+            <div style={{fontSize:26,fontWeight:700,color:'#EDE8DF',letterSpacing:'-.02em',marginBottom:2}}>{proj.name}</div>
+            <div style={{width:36,height:2.5,background:'#C8783A',borderRadius:2,marginBottom:16}}/>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:'10px 20px'}}>
+              {[['Adresse',proj.address],proj.contact&&['Ansprechpartner',proj.contact],proj.phone&&['Telefon',proj.phone],['Datum',fmtDate(proj.createdAt)],['Räume',(proj.rooms?.length??0)+' Räume']].filter(Boolean).map(([k,v])=>(
+                <div key={k}>
+                  <div style={{fontSize:10,fontWeight:700,color:'#6B6460',letterSpacing:'.08em',marginBottom:2}}>{k.toUpperCase()}</div>
+                  <div style={{fontSize:14,color:'#C8C0B4',fontWeight:500}}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Rooms */}
+          {(proj.rooms??[]).map((room,ri)=>(
+            <div key={room.id} className="print-page" style={{marginBottom:32}}>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
+                <div style={{
+                  width:32,height:32,borderRadius:9,background:'#C8783A22',
+                  display:'flex',alignItems:'center',justifyContent:'center',
+                  color:'#C8783A',fontSize:14,fontWeight:700,fontFamily:'DM Mono,monospace',flexShrink:0,
+                }}>{ri+1}</div>
+                <div>
+                  <div style={{fontSize:18,fontWeight:700,color:'#EDE8DF',letterSpacing:'-.01em'}}>{room.name}</div>
+                  <div style={{fontSize:12,color:'#6B6460'}}>{room.type}{room.description?' · '+room.description:''}</div>
+                </div>
+              </div>
+
+              {(!room.photos||room.photos.length===0) && (
+                <div style={{padding:'14px 16px',background:'#21201C',border:'1.5px solid #302C28',borderRadius:12,color:'#6B6460',fontSize:13,marginBottom:20}}>Keine Fotos</div>
+              )}
+              <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))',gap:14}}>
+                {(room.photos??[]).map((ph,pi)=>(
+                  <div key={ph.id} style={{background:'#21201C',border:'1.5px solid #302C28',borderRadius:14,overflow:'hidden'}}>
+                    <div style={{padding:'8px 12px 5px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                      <div style={{fontSize:11,color:'#6B6460',fontWeight:600,letterSpacing:'.05em'}}>FOTO {pi+1}</div>
+                      <div style={{fontSize:11,color:'#6B6460'}}>{fmtDate(ph.createdAt)}</div>
+                    </div>
+                    <SummaryPhoto photo={ph}/>
+                    {(ph.measurements?.length>0||ph.texts?.length>0) && (
+                      <div style={{padding:'10px 12px 6px'}}>
+                        <div style={{fontSize:10,fontWeight:700,color:'#6B6460',letterSpacing:'.08em',marginBottom:7}}>MASSE & NOTIZEN</div>
+                        <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                          {(ph.measurements??[]).map(m=>(
+                            <div key={m.id} style={{display:'flex',alignItems:'center',gap:5,padding:'4px 9px',background:'#2A2822',borderRadius:20}}>
+                              <div style={{width:7,height:7,borderRadius:'50%',background:m.color}}/>
+                              <span style={{fontSize:11,color:'#9A9088'}}>{MTYPES.find(t=>t.id===m.type)?.label}:</span>
+                              <span className="mono" style={{fontSize:12,color:'#EDE8DF',fontWeight:500}}>{m.value} cm</span>
+                            </div>
+                          ))}
+                          {(ph.texts??[]).map(t=>(
+                            <div key={t.id} style={{display:'flex',alignItems:'center',gap:5,padding:'4px 9px',background:'#2A2822',borderRadius:20}}>
+                              <IcText s={11}/>
+                              <span style={{fontSize:12,color:'#EDE8DF'}}>{t.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {ph.notes && (
+                      <div style={{margin:'6px 12px 12px',padding:'8px 11px',background:'#2A2822',borderRadius:8,fontSize:12,color:'#9A9088'}}>
+                        <strong style={{color:'#C8C0B4'}}>Notiz: </strong>{ph.notes}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SummaryPhoto({photo}) {
+  const cRef=useRef(), wRef=useRef();
+  useEffect(()=>{
+    if(!photo.imageData||!cRef.current) return;
+    const c=cRef.current, img=new Image();
+    img.onload=()=>{
+      const maxW=wRef.current?.offsetWidth||400;
+      const ratio=Math.min(maxW/img.naturalWidth,280/img.naturalHeight,1);
+      c.width=img.naturalWidth*ratio; c.height=img.naturalHeight*ratio;
+      const ctx=c.getContext('2d'); ctx.drawImage(img,0,0,c.width,c.height);
+      const s=c.width/800;
+      (photo.measurements??[]).forEach(m=>{ const x1=m.x1*c.width,y1=m.y1*c.height,x2=m.x2*c.width,y2=m.y2*c.height; drawArrow(ctx,x1,y1,x2,y2,m.color,s); drawLabel(ctx,x1,y1,x2,y2,m.value+' cm',s); });
+      (photo.texts??[]).forEach(t=>{ drawTextAnnot(ctx,t.x*c.width,t.y*c.height,t.text,false,s); });
+    };
+    img.src=photo.imageData;
+  },[photo]);
+  return <div ref={wRef} style={{background:'#151310',overflow:'hidden'}}><canvas ref={cRef} style={{display:'block',maxWidth:'100%'}}/></div>;
+}
+
+/* ─── Shared UI ─── */
+function Modal({title, onClose, children}) {
+  return (
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.72)',display:'flex',alignItems:'flex-end',justifyContent:'center',zIndex:200,padding:'0 16px 16px'}}
+      onClick={onClose}>
+      <div className="scale-in" style={{
+        background:'#1D1B18', border:'1.5px solid #302C28', borderRadius:20,
+        width:'100%', maxWidth:440, maxHeight:'90dvh', overflowY:'auto',
+        boxShadow:'0 -4px 48px rgba(0,0,0,.5)',
+      }} onClick={e=>e.stopPropagation()}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 20px 14px',borderBottom:'1.5px solid #2A2822'}}>
+          <div style={{fontSize:17,fontWeight:700,color:'#EDE8DF',letterSpacing:'-.01em'}}>{title}</div>
+          <button className="btn" style={{width:32,height:32,minHeight:32,padding:0,border:'none',background:'transparent',color:'#6B6460'}} onClick={onClose}><IcX/></button>
+        </div>
+        <div style={{padding:20}}>{children}</div>
+      </div>
+    </div>
+  );
+}
+
+function FField({label, val, onChange, ph, type='text', multi=false}) {
+  return (
+    <div>
+      <label style={{display:'block',fontSize:12,fontWeight:600,color:'#6B6460',marginBottom:6,letterSpacing:'.03em'}}>{label.toUpperCase()}</label>
+      {multi
+        ? <textarea style={{resize:'none',height:72,fontSize:15}} value={val} onChange={e=>onChange(e.target.value)} placeholder={ph}/>
+        : <input style={{fontSize:15}} type={type} value={val} onChange={e=>onChange(e.target.value)} placeholder={ph}/>
+      }
+    </div>
+  );
+}
+
+/* ─── Mount ─── */
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
